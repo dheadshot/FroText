@@ -1,3 +1,6 @@
+#ifndef _FROTEXT_H_
+#define _FROTEXT_H_
+
 #define PROGVER "0.01.00 ALPHA"
 
 #define PTF_NORMAL         0x0000
@@ -42,3 +45,7 @@ typedef enum file_type
 arow *newrow(char *rawtext);
 int findlastrow();
 int loadfromfile();
+
+
+
+#endif
