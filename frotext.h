@@ -22,7 +22,8 @@ typedef struct arow  /* This bit partly inspired by Kilo */
 {
   int iscmdline  /* is the line a command line? */
   char *rawtext; /* Raw text from the file */
-  long rawlen;   /* Length of the raw row in characters */
+  long rawlen;   /* Length of rawtext in characters */
+  long rawsize;  /* Number of bytes allocated to rawtext */
   char *edtext;  /* Text for the editor */
   long edlen;    /* Length of the editor row in characters */
   unsigned int *formattext;  /* The format of the text (length edlen) */

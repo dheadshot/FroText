@@ -33,7 +33,8 @@ arow *newrow(char *rawtext)
   }
   memset(therow,0,sizeof(arow));
   therow->rawlen = strlen(rawtext);
-  therow->rawtext = malloc(sizeof(char)*(1+therow->rawlen));
+  therow->rawsize = (therow->rawlen*sizeof(char)) + 1; /* There is method in this madness! */
+  therow->rawtext = malloc(therow->rawsize);
   if (therow->rawtext == NULL)
   {
     free(therow);
@@ -49,6 +50,19 @@ int findlastrow()
   rowptr = rowroot;
   if (rowptr == NULL) return 0;
   while (rowptr->next != NULL) rowptr = rowptr->next;
+  return 1;
+}
+
+int findnthrow(unsigned long n)
+{
+  unsigned long i;
+  if (rowroot == NULL) return 0;
+  for (rowptr = rowroot; rowptr->next != NULL; rowptr = rowptr->next)
+  {
+    if (i == n) break;
+    i++;
+  }
+  if (i != n) return 0;
   return 1;
 }
 
