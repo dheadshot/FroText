@@ -1,0 +1,56 @@
+Control code	Description
+&20	"Hard" space
+&0D,&0A	"Hard" end-of-line
+&09	TAB
+&1A	End of file
+&0D,&8A	"Soft" end-of-line
+&80	text marker "0" (note 2)
+&81	text marker "1" (note 2)
+&82	text marker "2" (note 2)
+&83	text marker "3" (note 2)
+&84	text marker "4" (note 2)
+&85	text marker "5" (note 2)
+&86	text marker "6" (note 2)
+&87	text marker "7" (note 2)
+&88	text marker "8" (note 2)
+&89	text marker "9" (note 2)
+&8A	used in code sequence of "Hard" end of line
+&8B	block marker "[" (note 2)
+&8C	block marker "]" (note 2)
+&8D	unused??
+&8E	"Soft" hyphen
+&90	"Soft" space
+&91	"Non-break" space
+&92-&DF	unused?
+&E0	Printer control code "@" - "reset printer" (note 1)
+&E1	Printer control code "a" - user defineable print style (note 1)
+&E2	Printer control code "b" - "bold" print style (note 1)
+&E3	Printer control code "c" - "condensed" print style (note 1)
+&E4	Printer control code "d" - "double-strike" print style (note 1)
+&E5	Printer control code "e" - "elite" print style (note 1)
+&E6	Printer control code "f" - "font change 1" print style (note 1)
+&E7	Printer control code "g" - "font change 2" print style (note 1)
+&E8	Printer control code "h" - user defineable print style (note 1)
+&E9	Printer control code "i" - "italics" print style (note 1)
+&EA	Printer control code "j" - user defineable print style (note 1)
+&EB	Printer control code "k" - user defineable print style (note 1)
+&EC	Printer control code "l" - "enlarged" print style (note 1)
+&ED	Printer control code "m" - user defineable print style (note 1)
+&EE	Printer control code "n" - "normal (pica)" print style (note 1)
+&EF	Printer control code "o" - user defineable print style (note 1)
+&F0	Printer control code "p" - "proportional " print style (note 1)
+&F1	Printer control code "q" - "NLQ (near letter quality)" print style (note 1)
+&F2	Printer control code "r" - user defineable print style (note 1)
+&F3	Printer control code "s" - "subscript" print style (note 1)
+&F4	Printer control code "t" - "superscript" print style (note 1)
+&F5	Printer control code "u" - "underline " print style (note 1)
+&F6	Printer control code "v" - user defineable print style (note 1)
+&F7	Printer control code "w" - user defineable print style (note 1)
+&F8	Printer control code "x" - user defineable print style (note 1)
+&F9	Printer control code "y" - user defineable print style (note 1)
+&FA	Printer control code "z" - user defineable print style (note 1)
+&FB-&FF	unused?
+NOTE:
+
+These are the names given to the default print styles defined by Protext. However, these can be redefined to perform any print function. The default function, defines "on" and "off" printer control sequences. The "on" code initialises the function, and the "off" code disables the function. When the code is encountered, and it is not active, then it will be activated. If the code is encountered and it is active, then it will be deactivated.
+These codes are used internally and are not saved out to a file

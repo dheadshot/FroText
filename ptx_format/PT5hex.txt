@@ -1,0 +1,22 @@
+000000   T   h   i   s       i   s       a       t   e   s   t       t
+000010   o       s   e   e       f   i   l   e       f   o   r   m   a
+000020   t   t   i   n   g   :  \r  \n   H   e   r   e       w   e    
+000030   t   r   y       n   o   r   m   a   l  \r  \n   A   p   p   a
+000040   r   e   n   t   l   y   ,       A   L   T   -   D       i   s
+000050       D   a   t   e   ,       A   L   T   -   F       i   s    
+000060 005 220   M   O   D   E   ,       A   L   T   -   B       i   s
+000070       B   O   L   D   ,       A   L   T   -   S      \r 212   i
+000080   s       s   h   a   r   p       S   ,       A   L   T   -   C
+000090       i   s       C   e   d   i   l   l   a   ,       A   L   T
+0000a0   -   E       i   s       A   s   h   ,       A   L   T   -   H
+0000b0       i   s       H   a   l   f  \r  \n 005 342   T   h   i   s
+0000c0       i   s       B   O   L   D                      \r  \n 005
+0000d0 365   T   h   i   s       i   s       B   O   L   D       U   N
+0000e0   D   E   R   L   I   N   E  \r  \n 005 342   T   h   i   s    
+0000f0   i   s       U   n   d   e   r   l   i   n   e  \r  \n 005 354
+000100 005 365   T   h   i   s       i   s       e   n   l   a   r   g
+000110   e   d 005 354  \r  \n   C   T   R   L   +   X   ,       t   h
+000120   e   n       a   -   z   ,       #   ,       *   ,       =    
+000130   f   o   r       f   o   r   m   a   t   s   /   m   a   r   k
+000140   e   r   s
+000143

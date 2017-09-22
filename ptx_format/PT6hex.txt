@@ -1,0 +1,43 @@
+000000  \0  \0   P   R   O   T 001  \0 002  \0 001  \0 001  \0 356  \0
+000010  \0  \0 034  \0   N 001  \0  \0 221 002  \0  \0  \f  \0 001  \0
+000020  \0  \0  \b  \0  \b  \0  \0  \0  \f  \0 006  \0  \0  \0  \b  \0
+000030  \0  \0  \0  \0   ,  \0  \v  \0  \0  \0  \b  \0 001  \0 220 244
+000040   ^   t 020 016 020 016 020 016 020 016  \0  \0  \0  \0   $  \0
+000050  \0  \0  \0  \0  \0  \0 246 004 246 004 001  \0  \0  \0  \0  \0
+000060 356  \0 020  \0  \0  \0  \b  \0   >   -   -   -   -   -   -   -
+000070   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+000080   -   -   -   -   -   -   -   C   -   -   -   -   -   -   -   -
+000090   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+0000a0   -   -   -   -   -   -   R  \r  \n   >   B   L       o   f   f		Blank line suppression OFF
+0000b0  \r  \n   >   W   O       o   n  \r  \n   >   R   J       o   n		Widow/Orphan elimination on, Right Justify on
+0000c0  \r  \n   >   I   P       o   f   f  \r  \n   >   H   Y       1		Inter-paragraph space is normal, 
+0000d0   0   0  \r  \n   >   H   Y       o   f   f  \r  \n   >   T   L		Hyphenation factor 100/OFF
+0000e0      \r  \n   >   L   S       1  \r  \n   >   S   Q       o   n		No Tab Leader, Line Spacing 1, proper single quotes on
+0000f0  \r  \n   >   D   Q       o   n  \r  \n   >   -   -   -   -   !		Proper Double Quotes on
+000100   -   -   -   -   !   -   -   -   -   !   -   -   -   -   !   -
+000110   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -		Tabstops
+*
+000130   -   -   -   -   -   -   -   -   R  \r  \n   >   H   E       o		Headers off
+000140   f   f  \r  \n   >   F   O       o   f   f  \r  \n  \0   T   h		Footers off, PTX5 starts at address 00014E
+000150   i   s       i   s       a       t   e   s   t       t   o    
+000160   s   e   e       f   i   l   e       f   o   r   m   a   t   t
+000170   i   n   g   :  \r  \n   H   e   r   e       w   e       t   r
+000180   y       n   o   r   m   a   l  \r  \n   A   p   p   a   r   e
+000190   n   t   l   y   ,       A   L   T   -   D       i   s       D
+0001a0   a   t   e   ,       A   L   T   -   F       i   s     005 220		05,90 - ?Dunno what this does? Soft space?
+0001b0   M   O   D   E   ,       A   L   T   -   B       i   s       B
+0001c0   O   L   D   ,       A   L   T   -   S      \r 212   i   s    		05,8A - Soft EOL
+0001d0   s   h   a   r   p       S   ,       A   L   T   -   C       i
+0001e0   s       C   e   d   i   l   l   a   ,       A   L   T   -   E
+0001f0       i   s       A   s   h   ,       A   L   T   -   H       i
+000200   s       H   a   l   f  \r  \n 005 342   T   h   i   s       i		05,E2 - Bold On/Off
+000210   s       B   O   L   D                      \r  \n 005 365   T		05,F5 - Underline On/Off
+000220   h   i   s       i   s       B   O   L   D       U   N   D   E
+000230   R   L   I   N   E  \r  \n 005 342   T   h   i   s       i   s
+000240       U   n   d   e   r   l   i   n   e  \r  \n 005 354 005 365		05,EC - Enlarged on/off
+000250   T   h   i   s       i   s       e   n   l   a   r   g   e   d
+000260 005 354  \r  \n   C   T   R   L   +   X   ,       t   h   e   n
+000270       a   -   z   ,       #   ,       *   ,       =       f   o
+000280   r       f   o   r   m   a   t   s   /   m   a   r   k   e   r
+000290   s
+000291
