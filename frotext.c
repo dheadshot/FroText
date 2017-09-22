@@ -179,3 +179,79 @@ int createedtext(arow *row, unsigned int pformat)
   }
   return 1;
 }
+
+int formatfromn(unsigned long n, unsigned int pformat)
+{
+  if (!findnthrow(n)) return 0;
+  while (rowptr != NULL)
+  {
+    if (!createedtext(rowptr,pformat)) return 0;
+    pformat = rowptr->formatend;
+    rowptr = rowptr->next;
+  }
+  return 1;
+}
+
+int insertrow(unsigned long atrow, char *rawtext)
+{
+  unsigned long prow = atrow - 1;
+  arow *therow = newrow(rawtext);
+  if (therow == NULL) return 0;
+  if (atrow == 0 || rowroot == NULL)
+  {
+    therow->next = rowroot;
+    rowroot = therow;
+    if (!createedtext(therow,0)) return 0;
+  }
+  else
+  {
+    if (!findnthrow(prow))
+    {
+      /* Just add it to the bottom */
+      findlastrow();
+      rowptr->next = therow;
+    }
+    else
+    {
+      therow->next = rowptr->next;
+      rowptr->next = therow;
+    }
+    if (!createedtext(therow,rowptr->formatend)) return 0;
+  }
+  return 1;
+}
+
+void freerow(arow *row)
+{
+  if (row->rawtext != NULL) free(row->rawtext);
+  if (row->edtext != NULL) free(row->edtext);
+  if (row->formattext != NULL) free(row->formattext);
+  free(row);
+}
+
+int delrow(unsigned long atrow)
+{
+  /* Returns: 1=success, 0=failure, 2=possibly corrupted, but deletion worked */
+  unsigned long prow = atrow - 1;
+  unsigned int formatend = 0;
+  arow *delrow;
+  if (rowroot == NULL) return 0;
+  if (!findnthrow(atrow)) return 0;
+  if (atrow == 0)
+  {
+    delrow = rowroot;
+    rowroot = rowroot->next;
+    freerow(delrow);
+  }
+  else
+  {
+    if (!findnthrow(prow)) return 0;
+    delrow = rowptr->next;
+    rowptr->next = delrow->next;
+    freerow(delrow);
+    formatend = rowptr->formatend;
+  }
+  /* Format all from atrow, starting with formatend */
+  if (!formatfromn(atrow,formatend)) return 2;
+  return 1;
+}

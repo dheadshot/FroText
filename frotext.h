@@ -55,6 +55,11 @@ int findlastrow();
 int findnthrow(unsigned long n);
 int loadfromfile();
 int createedtext(arow *row, unsigned int pformat);
+int formatfromn(unsigned long n, unsigned int pformat);
+int insertrow(unsigned long atrow, char *rawtext);
+void freerow(arow *row);
+int delrow(unsigned long atrow);
+/* Returns: 1=success, 0=failure, 2=possibly corrupted, but deletion worked */
 
 
 #endif
