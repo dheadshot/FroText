@@ -112,3 +112,70 @@ int loadfromfile()
   }
   return 1;
 }
+
+int createedtext(arow *row, unsigned int pformat)
+{
+  /* pformat = previous row's formatend - not used for txt */
+  unsigned long numtabs = 0,i,j;
+  if (row->edtext != NULL) free(row->edtext);
+  if (row->formattext != NULL) free(row->formattext);
+  switch (ftype)
+  {
+    case txtnix:
+    case txtdos:
+    case txtmac:
+      /* Just expand tabs and replace control chars */
+      for (i=0;i < row->rawlen;i++)
+      {
+        if (row->rawtext[i] == 9) numtabs++;
+      }
+      row->edtext = (char *) malloc(sizeof(char)*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+      if (row->edtext == NULL) return 0;
+      
+      j = 0;
+      for (i=0;i < row->rawlen;i++)
+      {
+        if (row->rawtext[i] == 9)
+        {
+          row->edtext[j] = ' ';
+          j++;
+          while (j % DEFAULTTABSPACE != 0)
+          {
+            row->edtext[j] = ' ';
+            j++;
+          }
+        }
+        else if (row->rawtext[i] == 127 || (row->rawtext[i] >0 && row->rawtext[i] < 32))
+        {
+          row->edtext[j] = '?';
+          j++;
+        }
+        else
+        {
+          row->edtext[j] = row->rawtext[i];
+          j++;
+        }
+      }
+      row->edtext[j] = 0;
+      row->edlen = j;
+      row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*j);
+      if (row->formattext == NULL) return 0;
+      memset(row->formattext,0,j*sizeof(unsigned int));
+    break;
+    
+    case ptxnc:
+    case ptx5dos:
+    case ptx6dos:
+      /* Expand tabs, convert control characters, hide formatting codes and format text */
+    break;
+    
+    case ptxcpc:
+      /* Expand tabs, convert control characters, hide formatting codes and format text */
+    break;
+    
+    default:
+      return 0;
+    break;
+  }
+  return 1;
+}

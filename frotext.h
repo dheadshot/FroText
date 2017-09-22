@@ -14,6 +14,9 @@
 #define PTF_QUALITY        0x0080
 #define PTF_SUBSCRIPT      0x0100
 #define PTF_SUPERSCRIPT    0x0200
+#define PTF_DOUBLESTRIKE   0x0400
+#define PTF_NORMALPICA     0x0800
+/* ^ Might be wrong */
 
 #define PTF_BOOKMARK       0x4000
 #define PTF_SELECT         0x8000
@@ -37,16 +40,21 @@ typedef enum file_type
   txtdos=1,
   txtmac=2,
   ptxnc=10,
-  ptxdos=11,
-  ptxcpc=12,
+  ptx5dos=11,
+  ptx6dos=12
+  ptxcpc=13,
   other=100
 } file_type;
 
 
+#define DEFAULTTABSPACE 8
+
+
 arow *newrow(char *rawtext);
 int findlastrow();
+int findnthrow(unsigned long n);
 int loadfromfile();
-
+int createedtext(arow *row, unsigned int pformat);
 
 
 #endif
