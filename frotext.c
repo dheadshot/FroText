@@ -255,3 +255,49 @@ int delrow(unsigned long atrow)
   if (!formatfromn(atrow,formatend)) return 2;
   return 1;
 }
+
+int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum, 
+                   char *astr)
+{
+  /* Returns: 1=success, 0=failure, 2=astr was blank, 3=could not reformat */
+  unsigned long aslen = strlen(astr);
+  if (aslen == 0) return 2;
+  if (atchar > row->rawlen)
+  {
+    if (atchar+aslen+1 > row->rawsize)
+    {
+      row->rawsize = (atchar +1+aslen) * sizeof(char);
+      row->rawtext = (char *) realloc(row->rawtext,row->rawsize);
+      if (row->rawtext == NULL) return 0;
+    }
+    unsigned long i;
+    for (i=row->rawlen;i<atchar;i++) row->rawtext[i] = ' ';
+    strcpy(row->rawtext+(sizeof(char)*atchar),astr);
+  }
+  else
+  {
+    if (aslen+1+row->rawlen > row->rawsize)
+    {
+      row->rawsize = (row->rawlen +1+aslen)*sizeof(char);
+      row->rawtext = (char *) realloc(row->rawtext,row->rawsize);
+      if (row->rawtext == NULL) return 0;
+    }
+    memmove(row->rawtext+(sizeof(char)*(atchar+aslen)), 
+            row->rawtext+(sizeof(char)*atchar), 
+            sizeof(char)*(row->rawlen-atchar+1));
+    memcpy(row->rawtext+(sizeof(char)*atchar),astr,aslen*sizeof(char));
+  }
+  if (rownum == 0)
+  {
+    if (!formatfromn(rownum, 0)) return 3;
+  }
+  else
+  {
+    if (!findnthrow(rownum - 1))
+    {
+      return 3;
+    }
+    if (!formatfromn(rownum, rowptr->formatend)) return 3;
+  }
+  return 1;
+}

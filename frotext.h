@@ -60,6 +60,9 @@ int insertrow(unsigned long atrow, char *rawtext);
 void freerow(arow *row);
 int delrow(unsigned long atrow);
 /* Returns: 1=success, 0=failure, 2=possibly corrupted, but deletion worked */
+int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum, 
+                   char *astr);
+/* Returns: 1=success, 0=failure, 2=astr was blank, 3=could not reformat */
 
 
 #endif
