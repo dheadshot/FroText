@@ -1,0 +1,5 @@
+0000000   T   h   i   s       i   s       n   o   t       a       c   o
+0000020   m   m   a   n   d  \r  \n   >   O   r       i   s       i   t
+0000040   ?  \r  \n   W   h   a   t       r   e   p   l   a   c   e   s
+0000060       <       a   n   d       >   ?
+0000071
