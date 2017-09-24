@@ -11,6 +11,8 @@
 unsigned long scrw = 0, scrh = 0; /* Screen Width & Height */
 file_type ftype; /* File type */
 char *afn = NULL; /* Filename */
+int showcodes = 0; /* Show PTX formatting codes? */
+int showcmds = 1; /* Show PTX Command lines? */
 unsigned long uschanges = 0; /* Unsaved changes */
 unsigned long cx=0, cy=0, ssx=0, ssy=0, sex=0, sey=0; /*Cursor X & Y, Selected Text Start & End X & Y */
 int issel; /* Is text selected? */
@@ -64,6 +66,33 @@ int findnthrow(unsigned long n)
   }
   if (i != n) return 0;
   return 1;
+}
+
+int istabrow(arow *row)
+{
+  if (row->iscmdline && (row->rawtext[1]=='-' || (row->rawtext[2] == '-' && row->rawlen>2) || (row->rawtext[3]=='-' && row->rawlen>3)))
+  {
+    return 1;
+  }
+  return 0;
+}
+
+unsigned long findlasttabrow(unsigned long beforen)
+{
+  unsigned long i,trow=0;
+  if (rowroot == NULL) return 0;
+  for (rowptr = rowroot; rowptr->next != NULL; rowptr = rowptr->next)
+  {
+    if (istabrow(rowptr))
+    /*if (rowptr->iscmdline && (rowptr->rawtext[1]=='-' || (rowptr->rawtext[2] == '-' && rowptr->rawlen>2) || (rowptr->rawtext[3]=='-' && rowptr->rawlen>3)))*/
+    {
+      trow = i;
+    }
+    if (i == beforen) break;
+    i++;
+  }
+  if (i != beforen) return 0;
+  return trow;
 }
 
 int loadfromfile()
@@ -321,5 +350,112 @@ int delstrinrow(arow *row, unsigned long slen, unsigned long spos,
   {
     if ((!findnthrow(rownum-1)) || (!formatfromn(rownum,rowptr->formatend))) return 2;
   }
+  return 1;
+}
+
+unsigned long edoffsettorawoffset(arow *row, unsigned long edx, 
+                                  unsigned long rownum)
+{
+  unsigned long i, j=0, k, res = edx, ltr = 0;
+  short int in5 = 0;
+  if (edx >= row->edlen) edx = edlen - 1;
+  switch (ftype)
+  {
+    case txtnix:
+    case txtdos:
+    case txtmac:
+      for (i=0;i < row->rawlen;i++)
+      {
+        if (j >= edx) break;
+        if (row->rawtext[i] == '\t')
+        {
+          j++;
+          while (j % DEFAULTTABSPACE != 0) j++;
+        }
+        else j++;
+      }
+      res = j;
+    break;
+    
+    case ptxnc:
+    case ptx5dos:
+    case ptx6dos:
+      ltr = findlasttabrow(rownum);
+      for (i=0;i < row->rawlen;i++)
+      {
+        if (j >= edx) break;
+        if (in5)
+        {
+          if (row->rawtext[i] >= 0x80 && row->rawtext[i] <= 0x89)
+          {
+            if (showcodes) j++;
+          }
+          else if (row->rawtext[i] == 0x8C || row->rawtext[i] == 0x8D || row->rawtext[i] == 0x93)
+          {
+            if (showcodes) j++;
+          }
+          else if (row->rawtext[i] == 0x8E || row->rawtext[i] == 0x91 || row->rawtext[i] == 0x92)
+          {
+            j++;
+          }
+          else if (row->rawtext[i] >=0xE0 && row->rawtext[i] <= 0xFA)
+          {
+            if (showcodes) j++;
+          }
+          in5 = 0;
+        }
+        else if (row->rawtext[i] == '\t')
+        {
+          j++;
+          if (findnthrow(ltr) && istabrow(rowptr))
+          {
+            for (k=j;rowptr->rawtext[k]=='-';k++) ;
+            if (rowptr->rawtext[k] == '!') j = k;
+            else
+            {
+              while (j % DEFAULTTABSPACE != 0) j++;
+            }
+          }
+          else
+          {
+            while (j % DEFAULTTABSPACE != 0) j++;
+          }
+        }
+        else if (row->rawlen[i] == 5)
+        {
+          in5 = 1;
+        }
+        else j++;
+      }
+      res = j;
+      
+    break;
+    
+    case ptxcpc:
+      //Does the CPC have tab rows?
+    break;
+  }
+  return res;
+}
+
+int doinsertstr(char *astr, unsigned long formattedlen)
+{
+  /* Formattedlen = Length of astr when formatted */
+  unsigned long slen = strlen(astr);
+  arow *therow;
+  if (slen == 0) return 0;
+  unsigned long fx, fy;
+  fx = scrx+cx;
+  fy = scry+cy;
+  while (!findnthrow(fy))
+  {
+    if (!insertrow(fy,"")) return 0;
+  }
+  therow = rowptr;
+  fx = edoffsettorawoffset(therow,fx,fy);  //Won't work if cmdlines are not shown
+  if (!insertstrinrow(therow,fx,fy,astr)) return 0;
+  if (cx==scrw-formattedlen) scrx +=formattedlen;
+  else cx += formattedlen;
+  uschanges++;
   return 1;
 }

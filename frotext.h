@@ -18,6 +18,7 @@
 #define PTF_NORMALPICA     0x0800
 /* ^ Might be wrong */
 
+#define PTX_SPECIALCHAR    0x2000
 #define PTF_BOOKMARK       0x4000
 #define PTF_SELECT         0x8000
 
@@ -53,6 +54,8 @@ typedef enum file_type
 arow *newrow(char *rawtext);
 int findlastrow();
 int findnthrow(unsigned long n);
+int istabrow(arow *row);
+unsigned long findlasttabrow(unsigned long beforen);
 int loadfromfile();
 int createedtext(arow *row, unsigned int pformat);
 int formatfromn(unsigned long n, unsigned int pformat);
@@ -66,6 +69,10 @@ int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum,
 int delstrinrow(arow *row, unsigned long slen, unsigned long spos, 
                 unsigned long rownum);
 /* Returns: 1=success, 0=failure, 2=could not reformat */
+unsigned long edoffsettorawoffset(arow *row, unsigned long edx, 
+                                  unsigned long rownum);
+int doinsertstr(char *astr, unsigned long formattedlen);
+/* Formattedlen = Length of astr when formatted */
 
 
 #endif
