@@ -251,6 +251,7 @@ int delrow(unsigned long atrow)
     freerow(delrow);
     formatend = rowptr->formatend;
   }
+  uschanges++;
   /* Format all from atrow, starting with formatend */
   if (!formatfromn(atrow,formatend)) return 2;
   return 1;
@@ -287,6 +288,7 @@ int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum,
             sizeof(char)*(row->rawlen-atchar+1));
     memcpy(row->rawtext+(sizeof(char)*atchar),astr,aslen*sizeof(char));
   }
+  uschanges++;
   if (rownum == 0)
   {
     if (!formatfromn(rownum, 0)) return 3;
@@ -298,6 +300,26 @@ int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum,
       return 3;
     }
     if (!formatfromn(rownum, rowptr->formatend)) return 3;
+  }
+  return 1;
+}
+
+int delstrinrow(arow *row, unsigned long slen, unsigned long spos, 
+                unsigned long rownum)
+{
+  /* Returns: 1=success, 0=failure, 2=could not reformat */
+  if (spos >= row->rawlen) return 0;
+  if (slen == 0) return 0;
+  if (spos+slen>row->rawlen) slen=row->rawlen-spos;
+  memmove(row->rawtext+(sizeof(char)*spos), 
+          row->rawtext+(sizeof(char)*(spos+slen)), 
+          sizeof(char)*(row->rawlen+1-(spos+slen)));
+  row->rawlen -= slen;
+  uschanges++;
+  if (rownum == 0 && (!formatfromn(0,0))) return 2;
+  if (rownum >0)
+  {
+    if ((!findnthrow(rownum-1)) || (!formatfromn(rownum,rowptr->formatend))) return 2;
   }
   return 1;
 }

@@ -63,6 +63,9 @@ int delrow(unsigned long atrow);
 int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum, 
                    char *astr);
 /* Returns: 1=success, 0=failure, 2=astr was blank, 3=could not reformat */
+int delstrinrow(arow *row, unsigned long slen, unsigned long spos, 
+                unsigned long rownum);
+/* Returns: 1=success, 0=failure, 2=could not reformat */
 
 
 #endif
