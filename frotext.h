@@ -22,6 +22,8 @@
 #define PTF_BOOKMARK       0x4000
 #define PTF_SELECT         0x8000
 
+#include <limits.h>
+
 typedef struct arow  /* This bit partly inspired by Kilo */
 {
   int iscmdline  /* is the line a command line? */
@@ -53,7 +55,7 @@ typedef enum file_type
 
 arow *newrow(char *rawtext);
 int findlastrow();
-int findnthrow(unsigned long n);
+int findnthrow(unsigned long n, short int inccmds);
 int istabrow(arow *row);
 unsigned long findlasttabrow(unsigned long beforen);
 int loadfromfile();
@@ -71,8 +73,10 @@ int delstrinrow(arow *row, unsigned long slen, unsigned long spos,
 /* Returns: 1=success, 0=failure, 2=could not reformat */
 unsigned long edoffsettorawoffset(arow *row, unsigned long edx, 
                                   unsigned long rownum);
+unsigned long realrownum(unsigned long rownum);
 int doinsertstr(char *astr, unsigned long formattedlen);
 /* Formattedlen = Length of astr when formatted */
+int donl();
 
 
 #endif

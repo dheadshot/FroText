@@ -55,14 +55,17 @@ int findlastrow()
   return 1;
 }
 
-int findnthrow(unsigned long n)
+int findnthrow(unsigned long n, short int inccmds)
 {
   unsigned long i;
   if (rowroot == NULL) return 0;
   for (rowptr = rowroot; rowptr->next != NULL; rowptr = rowptr->next)
   {
-    if (i == n) break;
-    i++;
+    if (inccmds || rowptr->iscmdline == 0)
+    {
+      if (i == n) break;
+      i++;
+    }
   }
   if (i != n) return 0;
   return 1;
@@ -211,7 +214,7 @@ int createedtext(arow *row, unsigned int pformat)
 
 int formatfromn(unsigned long n, unsigned int pformat)
 {
-  if (!findnthrow(n)) return 0;
+  if (!findnthrow(n,1)) return 0;
   while (rowptr != NULL)
   {
     if (!createedtext(rowptr,pformat)) return 0;
@@ -234,7 +237,7 @@ int insertrow(unsigned long atrow, char *rawtext)
   }
   else
   {
-    if (!findnthrow(prow))
+    if (!findnthrow(prow,1))
     {
       /* Just add it to the bottom */
       findlastrow();
@@ -265,7 +268,7 @@ int delrow(unsigned long atrow)
   unsigned int formatend = 0;
   arow *delrow;
   if (rowroot == NULL) return 0;
-  if (!findnthrow(atrow)) return 0;
+  if (!findnthrow(atrow,1)) return 0;
   if (atrow == 0)
   {
     delrow = rowroot;
@@ -274,7 +277,7 @@ int delrow(unsigned long atrow)
   }
   else
   {
-    if (!findnthrow(prow)) return 0;
+    if (!findnthrow(prow,1)) return 0;
     delrow = rowptr->next;
     rowptr->next = delrow->next;
     freerow(delrow);
@@ -324,7 +327,7 @@ int insertstrinrow(arow *row, unsigned long atchar, unsigned long rownum,
   }
   else
   {
-    if (!findnthrow(rownum - 1))
+    if (!findnthrow(rownum - 1,1))
     {
       return 3;
     }
@@ -348,7 +351,7 @@ int delstrinrow(arow *row, unsigned long slen, unsigned long spos,
   if (rownum == 0 && (!formatfromn(0,0))) return 2;
   if (rownum >0)
   {
-    if ((!findnthrow(rownum-1)) || (!formatfromn(rownum,rowptr->formatend))) return 2;
+    if ((!findnthrow(rownum-1,1)) || (!formatfromn(rownum,rowptr->formatend))) return 2;
   }
   return 1;
 }
@@ -407,10 +410,13 @@ unsigned long edoffsettorawoffset(arow *row, unsigned long edx,
         else if (row->rawtext[i] == '\t')
         {
           j++;
-          if (findnthrow(ltr) && istabrow(rowptr))
+          if (findnthrow(ltr,1) && istabrow(rowptr))
           {
-            for (k=j;rowptr->rawtext[k]=='-';k++) ;
-            if (rowptr->rawtext[k] == '!') j = k;
+            for (k=j;rowptr->rawtext[k]!='!';k++)
+            {
+              if (rowptr->rawtext=='R') break;
+            }
+            if (rowptr->rawtext[k] == '!') j = k; //This won't work for wrapping
             else
             {
               while (j % DEFAULTTABSPACE != 0) j++;
@@ -438,24 +444,95 @@ unsigned long edoffsettorawoffset(arow *row, unsigned long edx,
   return res;
 }
 
+unsigned long realrownum(unsigned long rownum)
+{
+  arow *a = NULL;
+  unsigned long n = 0;
+  if (showcmds) return rownum;
+  if (findnthrow(rownum,0)) return 0;
+  a = rowptr;
+  if (a == NULL) return 0;
+  for (rowptr=rowroot;rowptr!=NULL;rowptr=rowptr->next)
+  {
+    if (rowptr == a) break;
+    n++;
+  }
+  if (rowptr == NULL) return 0;
+  return n;
+}
+
 int doinsertstr(char *astr, unsigned long formattedlen)
 {
   /* Formattedlen = Length of astr when formatted */
   unsigned long slen = strlen(astr);
   arow *therow;
   if (slen == 0) return 0;
-  unsigned long fx, fy;
+  unsigned long fx, fy, fyr;
   fx = scrx+cx;
   fy = scry+cy;
-  while (!findnthrow(fy))
+  while (!findnthrow(fy,showcmds))
   {
-    if (!insertrow(fy,"")) return 0;
+    if (!insertrow(ULONG_MAX,"")) return 0; /* Always add to the end */
   }
+  fyr = realrownum(fy);
   therow = rowptr;
-  fx = edoffsettorawoffset(therow,fx,fy);  //Won't work if cmdlines are not shown
-  if (!insertstrinrow(therow,fx,fy,astr)) return 0;
+  fx = edoffsettorawoffset(therow,fx,fyr);
+  if (!insertstrinrow(therow,fx,fyr,astr)) return 0;
   if (cx==scrw-formattedlen) scrx +=formattedlen;
   else cx += formattedlen;
+  uschanges++;
+  return 1;
+}
+
+int donl()
+{
+  arow *therow;
+  unsigned long fx, fy, fyr, rfx;
+  unsigned int pformat;
+  fx = scrx+cx;
+  fy = scry+cy;
+  if (!findnthrow(fy,showcmds))
+  {
+    if (!insertrow(ULONG_MAX,"")) return 0; /* Always add to the end */
+  }
+  else
+  {
+    fyr = realrownum(fy);
+    therow = rowptr;
+    if (fx>therow->edlen)
+    {
+      fx = therow->edlen;
+      if (!insertrow(fyr+1,"")) return 0; /* Add row after current */
+    }
+    else if (fx == 0)
+    {
+      if (!insertrow(fyr,"")) return 0; /* Add row before current */
+    }
+    else
+    {
+      /* Split current */
+      rfx = edoffsettorawoffset(therow, fx, fyr);
+      if (insertrow(fyr+1,therow->rawtext+(rfx*sizeof(char)))<1) return 0;
+      therow->rawtext[rfx] = 0;
+      therow->rawlen = rfx;
+    }
+    if (findnthrow(fyr-1,1))
+    {
+      pformat = rowptr->formatend;
+    } else pformat = 0;
+    formatfromn(fyr,pformat);
+  }
+  /* Fix cursor */
+  if (cy >= scrh-1)
+  {
+    scrx++;
+  }
+  else
+  {
+    cy++;
+  }
+  cx = 0;
+  scrx = 0;
   uschanges++;
   return 1;
 }
