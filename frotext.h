@@ -77,6 +77,9 @@ unsigned long realrownum(unsigned long rownum);
 int doinsertstr(char *astr, unsigned long formattedlen);
 /* Formattedlen = Length of astr when formatted */
 int donl();
+int dodelchar(short int isdelright); /* isdelright=0 for BS, 1 for DEL */
+/* Returns: 0=OoM, 1=OK, 2=No Action required, 3=Worked except formatting,
+           -1=Unknown Error */
 
 
 #endif

@@ -536,3 +536,90 @@ int donl()
   uschanges++;
   return 1;
 }
+
+int dodelchar(short int isdelright) /* isdelright=0 for BS, 1 for DEL */
+{
+  /* Returns: 0=OoM, 1=OK, 2=No Action required, 3=Worked except formatting, 
+             -1=Unknown Error */
+  arow *therow = NULL, *prevrow, *nextrow;
+  unsigned long fx, fy, fyr, rfx, pfy, pfyr, nufx, nfy, nfyr;
+  unsigned int pformat;
+  int rcode;
+  fx = scrx+cx;
+  fy = scry+cy;
+  if (!findnthrow(fy,showcmds)) return 2;
+  therow = rowptr;
+  fyr = realrownum(fy);
+  if (fx == 0 && fy == 0 && isdelright == 0) return 2;
+  if (fx == 0 && isdelright == 0)
+  {
+    pfy = fy-1;
+    pfyr = realrownum(pfy);
+    if (!findnthrow(pfy,showcmds)) return -1;
+    prevrow = rowptr;
+    nufx = prevrow->edlen
+    rcode = insertstrinrow(prevrow,prevrow->rawlen+1,pfyr,therow->rawtext);
+    if (rcode == 0) return -1; /* Or should this code be 0? */
+    rcode = delrow(fyr);
+    if (rcode != 1) return -1; /* Maybe if it's 0 it should be returning 0? */
+    therow = NULL;
+    if (cy == 0) scry--;
+    else cy--;
+    cx = nufx;
+    while (cx>scrw)
+    {
+      scrx += scrw;
+      cx -= scrw;
+    }
+  }
+  else if (fx >= therow->edlen && isdelright != 0)
+  {
+    nfy = fy+1;
+    nfyr = realrownum(nfy);
+    if (findnthrow(nfy,showcmds))
+    {
+      nextrow = rowptr;
+      rcode = insertstrinrow(therow,therow->rawlen+1,fyr,nextrow->rawtext);
+      if (rcode == 0) return -1; /* Or should this code be 0? */
+      rcode = delrow(nfyr);
+      if (rcode != 1) return -1; /* Maybe if it's 0 it should be returning 0? */
+      nextrow = NULL;
+    }
+  }
+  else if (isdelright == 0)
+  {
+    rcode = delstrinrow(therow,1,fx-1,fyr);
+    if (rcode == 0) return -1; /* Or should this code be 0? */
+    if (cx == 0 && scrx > 0) scrx--;
+    else cx--;
+  }
+  else
+  {
+    rcode = delstrinrow(therow,1,fx,fyr);
+    if (rcode == 0) return -1; /* Or should this code be 0? */
+  }
+  rcode = 1;
+  if (therow != NULL)
+  {
+    if (findnthrow(fy-1,showcmds))
+    {
+      /* Do some sort of update of the row formatting at this point! */
+      prevrow = rowptr;
+      rcode = formatfromn(fyr,prevrow->formatend);
+    }
+    else rcode = 0;
+  }
+  else
+  {
+    if (findnthrow(pfy-1,showcmds))
+    {
+      /* Do some sort of update of the row formatting at this point! */
+      therow = rowptr;
+      rcode = formatfromn(pfyr,therow->formatend);
+    }
+    else rcode = formatfromn(pfyr,0);
+  }
+  uschanges++;
+  if (rcode != 0) return 1;
+  else return 3;
+}
