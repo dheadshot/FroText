@@ -4,6 +4,7 @@ Control code	Description
 &09	TAB
 &1A	End of file?
 &0D,&8A	"Soft" end-of-line
+&5 &3D  "Spell Ignore" marker
 &5 &7F	Multi Marker
 ? &80	text marker "0" (note 2)
 ? &81	text marker "1" (note 2)
