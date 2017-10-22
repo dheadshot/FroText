@@ -145,10 +145,11 @@ int loadfromfile()
   return 1;
 }
 
-int createedtext(arow *row, unsigned int pformat)
+int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
 {
   /* pformat = previous row's formatend - not used for txt */
-  unsigned long numtabs = 0,i,j;
+  unsigned long numtabs = 0,i,j, ltr;
+  unsigned int apformat = pformat;
   if (row->edtext != NULL) free(row->edtext);
   if (row->formattext != NULL) free(row->formattext);
   switch (ftype)
@@ -199,6 +200,288 @@ int createedtext(arow *row, unsigned int pformat)
     case ptx5dos:
     case ptx6dos:
       /* Expand tabs, convert control characters, hide formatting codes and format text */
+      ltr = findlasttabrow(rownum);
+      for (i=0;i < row->rawlen;i++)
+      {
+        if (row->rawtext[i] == 9) numtabs++;
+      }
+      if ((!istabrow(ltr)) || (!findnthrow(ltr,1)))
+      {
+        row->edtext = (char *) malloc(sizeof(char)*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+      }
+      else
+      {//--------------------
+/*            for (k=j;rowptr->rawtext[k]!='!';k++)
+            {
+              if (rowptr->rawtext=='R') break;
+            }
+            if (rowptr->rawtext[k] == '!') j = k; //This won't work for wrapping
+      */
+        for (k=j;rowptr->rawtext[k]!='R';k++)
+        {
+          if (rowptr->rawtext[k]==0) break;
+        }
+        
+        row->edtext = (char *) malloc(sizeof(char)*k*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*k*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+      }
+      if (row->edtext == NULL) return 0;
+      if (row->formattext == NULL) return 0;
+      
+      i=0;
+      j=0;
+      while (i < row->rawlen)
+      {
+        if (i==0 && row->rawtext[i]=='>')
+        {
+          row->iscmdline = 1;
+          row->edtext[j] == '>';
+          row->formattext[j] = apformat;
+          i++;
+          j++;
+        }
+        else if (row->rawtext[i]==9)
+        {
+          row->edtext[j]=' ';
+          row->formattext[j] = apformat;
+          j++;
+          if (istabrow(ltr))
+          {
+            for (k=j;rowptr->rawtext[k]!='!';k++)
+            {
+              if (rowptr->rawtext=='R') break;
+            }
+            if (rowptr->rawtext[k] == '!') /*; //This won't work for wrapping or centre tabs*/
+            {
+              while (j<k)
+              {
+                row->edtext[j]=' ';
+                row->formattext[j] = apformat;
+                j++;
+              }
+            }
+            else
+            {
+              while (j % DEFAULTTABSPACE > 0)
+              {
+                row->edtext[j]=' ';
+                row->formattext[j] = apformat;
+                j++;
+              }
+            }
+          }
+          else
+          {
+            while (j % DEFAULTTABSPACE > 0)
+            {
+              row->edtext[j]=' ';
+              row->formattext[j] = apformat;
+              j++;
+            }
+          }
+          i++;
+        }
+        else if (row->rawtext[i] == 0x05)
+        {
+          i++;
+          switch (row->rawtext[i])
+          {
+            case 0x3D:
+              if (showcodes)
+              {
+                row->edtext[j]='=';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x80:
+              if (showcodes)
+              {
+                row->edtext[j]='0';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x81:
+              if (showcodes)
+              {
+                row->edtext[j]='1';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x82:
+              if (showcodes)
+              {
+                row->edtext[j]='2';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x83:
+              if (showcodes)
+              {
+                row->edtext[j]='3';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x84:
+              if (showcodes)
+              {
+                row->edtext[j]='4';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x85:
+              if (showcodes)
+              {
+                row->edtext[j]='5';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x86:
+              if (showcodes)
+              {
+                row->edtext[j]='6';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x87:
+              if (showcodes)
+              {
+                row->edtext[j]='7';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x88:
+              if (showcodes)
+              {
+                row->edtext[j]='8';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x89:
+              if (showcodes)
+              {
+                row->edtext[j]='9';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0x8E:
+              row->edtext[j]='-';
+              row->formattext[j] = apformat | PTF_SPECIALCHAR;
+              j++;
+              i++;
+            break;
+            
+            case 0x91:
+              row->edtext[j]='_';
+              row->formattext[j] = apformat | PTF_SPECIALCHAR;
+              j++;
+              i++;
+            break;
+            
+            case 0x92:
+              row->edtext[j]='~';
+              row->formattext[j] = apformat | PTF_SPECIALCHAR;
+              j++;
+              i++;
+            break;
+            
+            case 0x93:
+              if (showcodes)
+              {
+                row->edtext[j]='F';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE0:
+              apformat &= 0xF000;
+              if (showcodes)
+              {
+                row->edtext[j]='@';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            //E1 goes here
+            
+            case 0xE2:
+              if (apformat & PTF_BOLD >0) apformat &= ~PTF_BOLD;
+              else apformat |= PTF_BOLD;
+              if (showcodes)
+              {
+                row->edtext[j]='b';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE3:
+              if (apformat & PTF_CONDENSED >0) apformat &= ~PTF_CONDENSED;
+              else apformat |= PTF_CONDENSED;
+              if (showcodes)
+              {
+                row->edtext[j]='c';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE4:
+              if (apformat & PTF_DOUBLESTRIKE >0) apformat &= ~PTF_DOUBLESTRIKE;
+              else apformat |= PTF_DOUBLESTRIKE;
+              if (showcodes)
+              {
+                row->edtext[j]='d';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            //=====================Continue from here
+          }
+        }
+      }
+      
     break;
     
     case ptxcpc:
@@ -215,9 +498,11 @@ int createedtext(arow *row, unsigned int pformat)
 int formatfromn(unsigned long n, unsigned int pformat)
 {
   if (!findnthrow(n,1)) return 0;
+  unsigned long i = n;
   while (rowptr != NULL)
   {
-    if (!createedtext(rowptr,pformat)) return 0;
+    if (!createedtext(rowptr,i,pformat)) return 0;
+    i++;
     pformat = rowptr->formatend;
     rowptr = rowptr->next;
   }
@@ -233,7 +518,7 @@ int insertrow(unsigned long atrow, char *rawtext)
   {
     therow->next = rowroot;
     rowroot = therow;
-    if (!createedtext(therow,0)) return 0;
+    if (!createedtext(therow,0,0)) return 0;
   }
   else
   {
@@ -248,7 +533,7 @@ int insertrow(unsigned long atrow, char *rawtext)
       therow->next = rowptr->next;
       rowptr->next = therow;
     }
-    if (!createedtext(therow,rowptr->formatend)) return 0;
+    if (!createedtext(therow,atrow,rowptr->formatend)) return 0;
   }
   return 1;
 }
@@ -412,9 +697,9 @@ unsigned long edoffsettorawoffset(arow *row, unsigned long edx,
           j++;
           if (findnthrow(ltr,1) && istabrow(rowptr))
           {
-            for (k=j;rowptr->rawtext[k]!='!';k++)
+            for (k=j;rowptr->rawtext[k]!='!';k++) //What about Centre Tabs?!
             {
-              if (rowptr->rawtext=='R') break;
+              if (rowptr->rawtext=='R' || rowptr->rawtext==0) break;
             }
             if (rowptr->rawtext[k] == '!') j = k; //This won't work for wrapping
             else

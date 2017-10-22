@@ -18,7 +18,7 @@
 #define PTF_NORMALPICA     0x0800
 /* ^ Might be wrong */
 
-#define PTX_SPECIALCHAR    0x2000
+#define PTF_SPECIALCHAR    0x2000
 #define PTF_BOOKMARK       0x4000
 #define PTF_SELECT         0x8000
 
@@ -59,7 +59,7 @@ int findnthrow(unsigned long n, short int inccmds);
 int istabrow(arow *row);
 unsigned long findlasttabrow(unsigned long beforen);
 int loadfromfile();
-int createedtext(arow *row, unsigned int pformat);
+int createedtext(arow *row, unsigned long rownum, unsigned int pformat);
 int formatfromn(unsigned long n, unsigned int pformat);
 int insertrow(unsigned long atrow, char *rawtext);
 void freerow(arow *row);
