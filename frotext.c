@@ -439,7 +439,16 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
               i++;
             break;
             
-            //E1 goes here
+            case 0xE1:
+              /* Set/reset apformat with something for "User Definable Print Style A" */
+              if (showcodes)
+              {
+                row->edtext[j]='a';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
             
             case 0xE2:
               if (apformat & PTF_BOLD >0) apformat &= ~PTF_BOLD;
@@ -477,8 +486,262 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
               i++;
             break;
             
+            case 0xE5:
+              if (apformat & PTF_ELITE >0) apformat &= ~PTF_ELITE;
+              else apformat |= PTF_ELITE;
+              if (showcodes)
+              {
+                row->edtext[j]='e';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE6:
+              /* Set/reset apformat with something for "Font Change 1" */
+              if (showcodes)
+              {
+                row->edtext[j]='f';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE7:
+              /* Set/reset apformat with something for "Font Change 2" */
+              if (showcodes)
+              {
+                row->edtext[j]='g';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE8:
+              /* Set/reset apformat with something for "User Defineable Print Style H" */
+              if (showcodes)
+              {
+                row->edtext[j]='h';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xE9:
+              if (apformat & PTF_ITALIC >0) apformat &= ~PTF_ITALIC;
+              else apformat |= PTF_ITALIC;
+              if (showcodes)
+              {
+                row->edtext[j]='i';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xEA:
+              /* Set/reset apformat with something for "User Defineable Print Style J" */
+              if (showcodes)
+              {
+                row->edtext[j]='j';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xEB:
+              /* Set/reset apformat with something for "User Defineable Print Style K" */
+              if (showcodes)
+              {
+                row->edtext[j]='k';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xEC:
+              if (apformat & PTF_ENLARGE >0) apformat &= ~PTF_ENLARGE;
+              else apformat |= PTF_ENLARGE;
+              if (showcodes)
+              {
+                row->edtext[j]='l';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xED:
+              /* Set/reset apformat with something for "User Defineable Print Style M" */
+              if (showcodes)
+              {
+                row->edtext[j]='m';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xEE:
+              if (apformat & PTF_NORMALPICA >0) apformat &= ~PTF_NORMALPICA;
+              else apformat |= PTF_NORMALPICA;
+              if (showcodes)
+              {
+                row->edtext[j]='n';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xEF:
+              /* Set/reset apformat with something for "User Defineable Print Style O" */
+              if (showcodes)
+              {
+                row->edtext[j]='o';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF0:
+              if (apformat & PTF_PROPORTIONAL >0) apformat &= ~PTF_PROPORTIONAL;
+              else apformat |= PTF_PROPORTIONAL;
+              if (showcodes)
+              {
+                row->edtext[j]='p';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF1:
+              if (apformat & PTF_QUALITY >0) apformat &= ~PTF_QUALITY;
+              else apformat |= PTF_QUALITY;
+              if (showcodes)
+              {
+                row->edtext[j]='q';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF2:
+              /* Set/reset apformat with something for "User Defineable Print Style R" */
+              if (showcodes)
+              {
+                row->edtext[j]='r';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF3:
+              if (apformat & PTF_SUBSCRIPT >0) apformat &= ~PTF_SUBSCRIPT;
+              else apformat |= PTF_SUBSCRIPT;
+              if (showcodes)
+              {
+                row->edtext[j]='s';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF4:
+              if (apformat & PTF_SUPERSCRIPT >0) apformat &= ~PTF_SUPERSCRIPT;
+              else apformat |= PTF_SUPERSCRIPT;
+              if (showcodes)
+              {
+                row->edtext[j]='t';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF5:
+              if (apformat & PTF_UNDERLINE >0) apformat &= ~PTF_UNDERLINE;
+              else apformat |= PTF_UNDERLINE;
+              if (showcodes)
+              {
+                row->edtext[j]='u';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF6:
+              /* Set/reset apformat with something for "User Defineable Print Style V" */
+              if (showcodes)
+              {
+                row->edtext[j]='v';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF7:
+              /* Set/reset apformat with something for "User Defineable Print Style W" */
+              if (showcodes)
+              {
+                row->edtext[j]='w';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF8:
+              /* Set/reset apformat with something for "User Defineable Print Style X" */
+              if (showcodes)
+              {
+                row->edtext[j]='x';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xF9:
+              /* Set/reset apformat with something for "User Defineable Print Style Y" */
+              if (showcodes)
+              {
+                row->edtext[j]='y';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            case 0xFA:
+              /* Set/reset apformat with something for "User Defineable Print Style Z" */
+              if (showcodes)
+              {
+                row->edtext[j]='z';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
+            
+            
             //=====================Continue from here
           }
+          /* End of 0x05 codes */
         }
       }
       
