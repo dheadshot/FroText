@@ -743,8 +743,9 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
           }
           /* End of 0x05 codes */
         }
+        /* End of the big IF */
       }
-      
+      /* End of the While loop */
     break;
     
     case ptxcpc:
