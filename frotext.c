@@ -194,6 +194,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
       row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*j);
       if (row->formattext == NULL) return 0;
       memset(row->formattext,0,j*sizeof(unsigned int));
+      row->formatend = row->formattext[j-1];
     break;
     
     case ptxnc:
@@ -746,6 +747,9 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
         /* End of the big IF */
       }
       /* End of the While loop */
+      row->edtext[j] = 0;
+      row->edlen = j;
+      row->formatend = row->formattext[j-1] & ~PTF_BOOKMARK;
     break;
     
     case ptxcpc:
