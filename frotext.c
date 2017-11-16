@@ -289,6 +289,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
           switch (row->rawtext[i])
           {
             case 0x3D:
+              /* Spell Ignore marker */
               if (showcodes)
               {
                 row->edtext[j]='=';
@@ -298,7 +299,19 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
               i++;
             break;
             
+            case 0x7F:
+              /* Multiple marker */
+              if (showcodes)
+              {
+                row->edtext[j]='?';
+                row->formattext[j] = apformat | PTF_BOOKMARK;
+                j++;
+              }
+              i++;
+            break;
+            
             case 0x80:
+              /* Bookmark 0 */
               if (showcodes)
               {
                 row->edtext[j]='0';
@@ -309,6 +322,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x81:
+              /* Bookmark 1 */
               if (showcodes)
               {
                 row->edtext[j]='1';
@@ -319,6 +333,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x82:
+              /* Bookmark 2 */
               if (showcodes)
               {
                 row->edtext[j]='2';
@@ -329,6 +344,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x83:
+              /* Bookmark 3 */
               if (showcodes)
               {
                 row->edtext[j]='3';
@@ -339,6 +355,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x84:
+              /* Bookmark 4 */
               if (showcodes)
               {
                 row->edtext[j]='4';
@@ -349,6 +366,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x85:
+              /* Bookmark 5 */
               if (showcodes)
               {
                 row->edtext[j]='5';
@@ -359,6 +377,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x86:
+              /* Bookmark 6 */
               if (showcodes)
               {
                 row->edtext[j]='6';
@@ -369,6 +388,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x87:
+              /* Bookmark 7 */
               if (showcodes)
               {
                 row->edtext[j]='7';
@@ -379,6 +399,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x88:
+              /* Bookmark 8 */
               if (showcodes)
               {
                 row->edtext[j]='8';
@@ -389,6 +410,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x89:
+              /* Bookmark 9 */
               if (showcodes)
               {
                 row->edtext[j]='9';
@@ -399,13 +421,23 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x8E:
+              /* Soft Hyphen */
               row->edtext[j]='-';
               row->formattext[j] = apformat | PTF_SPECIALCHAR;
               j++;
               i++;
             break;
             
+            case 0x90:
+              /* Soft Space */
+              row->edtext[j]='.';
+              row->formattext[j] = apformat | PTF_SPECIALCHAR;
+              j++;
+              i++;
+            break;
+            
             case 0x91:
+              /* NBSP */
               row->edtext[j]='_';
               row->formattext[j] = apformat | PTF_SPECIALCHAR;
               j++;
@@ -413,6 +445,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x92:
+              /* Non-breaking Hyphen */
               row->edtext[j]='~';
               row->formattext[j] = apformat | PTF_SPECIALCHAR;
               j++;
@@ -420,6 +453,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0x93:
+              /* Footnote Marker */
               if (showcodes)
               {
                 row->edtext[j]='F';
@@ -430,6 +464,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE0:
+              /* Reset Printer */
               apformat &= 0xF000;
               if (showcodes)
               {
@@ -452,6 +487,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE2:
+              /* Bold */
               if (apformat & PTF_BOLD >0) apformat &= ~PTF_BOLD;
               else apformat |= PTF_BOLD;
               if (showcodes)
@@ -464,6 +500,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE3:
+              /* Condensed */
               if (apformat & PTF_CONDENSED >0) apformat &= ~PTF_CONDENSED;
               else apformat |= PTF_CONDENSED;
               if (showcodes)
@@ -476,6 +513,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE4:
+              /* Double-Strike */
               if (apformat & PTF_DOUBLESTRIKE >0) apformat &= ~PTF_DOUBLESTRIKE;
               else apformat |= PTF_DOUBLESTRIKE;
               if (showcodes)
@@ -488,6 +526,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE5:
+              /* Elite */
               if (apformat & PTF_ELITE >0) apformat &= ~PTF_ELITE;
               else apformat |= PTF_ELITE;
               if (showcodes)
@@ -533,6 +572,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xE9:
+              /* Italics */
               if (apformat & PTF_ITALIC >0) apformat &= ~PTF_ITALIC;
               else apformat |= PTF_ITALIC;
               if (showcodes)
@@ -567,6 +607,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xEC:
+              /* Enlarged */
               if (apformat & PTF_ENLARGE >0) apformat &= ~PTF_ENLARGE;
               else apformat |= PTF_ENLARGE;
               if (showcodes)
@@ -590,6 +631,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xEE:
+              /* Normal Pica */
               if (apformat & PTF_NORMALPICA >0) apformat &= ~PTF_NORMALPICA;
               else apformat |= PTF_NORMALPICA;
               if (showcodes)
@@ -613,6 +655,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xF0:
+              /* Proportional */
               if (apformat & PTF_PROPORTIONAL >0) apformat &= ~PTF_PROPORTIONAL;
               else apformat |= PTF_PROPORTIONAL;
               if (showcodes)
@@ -625,6 +668,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xF1:
+              /* Quality */
               if (apformat & PTF_QUALITY >0) apformat &= ~PTF_QUALITY;
               else apformat |= PTF_QUALITY;
               if (showcodes)
@@ -648,6 +692,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xF3:
+              /* Subscript */
               if (apformat & PTF_SUBSCRIPT >0) apformat &= ~PTF_SUBSCRIPT;
               else apformat |= PTF_SUBSCRIPT;
               if (showcodes)
@@ -660,6 +705,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xF4:
+              /* Superscript */
               if (apformat & PTF_SUPERSCRIPT >0) apformat &= ~PTF_SUPERSCRIPT;
               else apformat |= PTF_SUPERSCRIPT;
               if (showcodes)
@@ -672,6 +718,7 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
             break;
             
             case 0xF5:
+              /* Underline */
               if (apformat & PTF_UNDERLINE >0) apformat &= ~PTF_UNDERLINE;
               else apformat |= PTF_UNDERLINE;
               if (showcodes)
