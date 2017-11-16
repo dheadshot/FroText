@@ -21,8 +21,9 @@ Control code	Description
 ? &8C	block marker "]" (note 2)
 ?? &8D	unused??
 &5 &8E	"Soft" hyphen
-&5 &91	"Soft" space
-&5 &92	"Non-break" space
+&5 &90	"Soft" space
+&5 &91	"Non-break" space
+&5 &92	"Non-Break" Hyphen
 ? &94-&DF	unused?
 &5 &93	Footnote Marker
 ? &E0	Printer control code "@" - "reset printer" (note 1)
