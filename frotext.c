@@ -99,7 +99,7 @@ unsigned long findlasttabrow(unsigned long beforen)
 }
 
 int loadfromfile()
-{
+{ /* This needs an overhaul! */
   FILE *aff;
   char *astr = malloc(sizeof(char)*2049);
   if (astr == NULL)
@@ -208,8 +208,8 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
       }
       if ((!istabrow(ltr)) || (!findnthrow(ltr,1)))
       {
-        row->edtext = (char *) malloc(sizeof(char)*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
-        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->edtext = (char *) malloc(sizeof(char)*(2+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*(2+row->rawlen+(numtabs*DEFAULTTABSPACE)));
       }
       else
       {//--------------------
@@ -224,8 +224,8 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
           if (rowptr->rawtext[k]==0) break;
         }
         
-        row->edtext = (char *) malloc(sizeof(char)*k*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
-        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*k*(1+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->edtext = (char *) malloc(sizeof(char)*k*(2+row->rawlen+(numtabs*DEFAULTTABSPACE)));
+        row->formattext = (unsigned int *) malloc(sizeof(unsigned int)*k*(2+row->rawlen+(numtabs*DEFAULTTABSPACE)));
       }
       if (row->edtext == NULL) return 0;
       if (row->formattext == NULL) return 0;
@@ -747,9 +747,15 @@ int createedtext(arow *row, unsigned long rownum, unsigned int pformat)
         /* End of the big IF */
       }
       /* End of the While loop */
+      if (row->issoftline != 0)
+      {
+        row->edtext[j] = '\\';
+        row->formattext[j] = apformat | PTF_SPECIALCHAR;
+        j++;
+      }
       row->edtext[j] = 0;
       row->edlen = j;
-      row->formatend = row->formattext[j-1] & ~PTF_BOOKMARK;
+      row->formatend = row->formattext[j-1] & ~(PTF_BOOKMARK | PTF_SPECIALCHAR);
     break;
     
     case ptxcpc:
@@ -777,11 +783,12 @@ int formatfromn(unsigned long n, unsigned int pformat)
   return 1;
 }
 
-int insertrow(unsigned long atrow, char *rawtext)
+int insertrow(unsigned long atrow, char *rawtext, int issoft)
 {
   unsigned long prow = atrow - 1;
   arow *therow = newrow(rawtext);
   if (therow == NULL) return 0;
+  therow->issoftline = issoft;
   if (atrow == 0 || rowroot == NULL)
   {
     therow->next = rowroot;
@@ -825,6 +832,10 @@ int delrow(unsigned long atrow)
   if (atrow == 0)
   {
     delrow = rowroot;
+    if (delrow->issoftline == 0 && delrow->next && delrow->next->issoftline != 0)
+    {
+      delrow->next->issoftline = 0;
+    }
     rowroot = rowroot->next;
     freerow(delrow);
   }
@@ -832,6 +843,10 @@ int delrow(unsigned long atrow)
   {
     if (!findnthrow(prow,1)) return 0;
     delrow = rowptr->next;
+    if (delrow->issoftline == 0 && delrow->next && delrow->next->issoftline != 0)
+    {
+      delrow->next->issoftline = 0;
+    }
     rowptr->next = delrow->next;
     freerow(delrow);
     formatend = rowptr->formatend;
@@ -1025,7 +1040,7 @@ int doinsertstr(char *astr, unsigned long formattedlen)
   fy = scry+cy;
   while (!findnthrow(fy,showcmds))
   {
-    if (!insertrow(ULONG_MAX,"")) return 0; /* Always add to the end */
+    if (!insertrow(ULONG_MAX,"",0)) return 0; /* Always add to the end */
   }
   fyr = realrownum(fy);
   therow = rowptr;
@@ -1037,7 +1052,7 @@ int doinsertstr(char *astr, unsigned long formattedlen)
   return 1;
 }
 
-int donl()
+int donl(int issoft)
 {
   arow *therow;
   unsigned long fx, fy, fyr, rfx;
@@ -1046,7 +1061,7 @@ int donl()
   fy = scry+cy;
   if (!findnthrow(fy,showcmds))
   {
-    if (!insertrow(ULONG_MAX,"")) return 0; /* Always add to the end */
+    if (!insertrow(ULONG_MAX,"",issoft)) return 0; /* Always add to the end */
   }
   else
   {
@@ -1055,17 +1070,17 @@ int donl()
     if (fx>therow->edlen)
     {
       fx = therow->edlen;
-      if (!insertrow(fyr+1,"")) return 0; /* Add row after current */
+      if (!insertrow(fyr+1,"",issoft)) return 0; /* Add row after current */
     }
     else if (fx == 0)
     {
-      if (!insertrow(fyr,"")) return 0; /* Add row before current */
+      if (!insertrow(fyr,"",issoft)) return 0; /* Add row before current */
     }
     else
     {
       /* Split current */
       rfx = edoffsettorawoffset(therow, fx, fyr);
-      if (insertrow(fyr+1,therow->rawtext+(rfx*sizeof(char)))<1) return 0;
+      if (insertrow(fyr+1,therow->rawtext+(rfx*sizeof(char)),issoft)<1) return 0;
       therow->rawtext[rfx] = 0;
       therow->rawlen = rfx;
     }
