@@ -45,7 +45,7 @@ typedef enum file_type
   txtmac=2,
   ptxnc=10,
   ptx5dos=11,
-  ptx6dos=12
+  ptx6dos=12,
   ptxcpc=13,
   other=100
 } file_type;
@@ -53,6 +53,15 @@ typedef enum file_type
 
 #define DEFAULTTABSPACE 8
 
+/*
+  Tab Row Markers:
+  R = Right-hand Margin
+  ! = Ordinary Tab
+  C = Centred Tab
+  . = Decimal Tab
+  
+  These need implementing still!
+*/
 
 arow *newrow(char *rawtext);
 int findlastrow();
